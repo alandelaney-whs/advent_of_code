@@ -1,12 +1,12 @@
 #!/usr/bin/env perl -w
-# day1.pl ---
+# day01.pl ---
 
 use strict;
 use warnings;
 
 sub main {
     my @values = [];
-    my $file_name = "data.txt";
+    my $file_name = "input.txt";
     open(my $fh, "<", $file_name) or die("Could not open file");
 
     foreach my $line (<$fh>) {
@@ -41,4 +41,4 @@ sub main {
     }
 }
 
-main()
+main();
