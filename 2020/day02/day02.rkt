@@ -1,3 +1,73 @@
+#!/usr/bin/env racket
+#lang typed/racket
+(require "input.rkt")
+
+(struct breakdown
+  ([min : Integer]
+   [max : Integer]
+   [char : Char]
+   [password : String]))
+
+(: count-chars (String Char -> Integer))
+(define (count-chars str chr)
+  (for/sum
+      ([x : Char str])
+    (if (equal? x chr) 1 0)))
+
+(: first-char (String -> Char))
+(define (first-char str)
+  (string-ref str 0))
+
+(: string->integer-or-die (String -> Integer))
+(define (string->integer-or-die str)
+  (let
+      ([rx (regexp-match? #px"^\\d*$" str)])
+    (if
+     (false? rx)
+     (raise "Not an integer value")
+     (let
+         ([num (string->number str)])
+       (if
+        (exact-integer? num)
+        num
+        (raise "Not an integer"))))))
+
+(: test-password (breakdown -> Integer))
+(define (test-password bd)
+  (let
+      ([count (count-chars (breakdown-password bd) (breakdown-char bd))])
+    (if (and (>= (breakdown-min bd) count) (<= (breakdown-max bd) count)) 1 0)))
+
+
+
+(: parse-line (String -> breakdown))
+(define (parse-line line)
+  (let
+      ([rx (regexp-match #px"(^\\d*)-(\\d*) ([a-z]): ([a-z]*)$" line)])
+    (if
+     (false? rx)
+     (raise "regexp failed")
+     
+     (breakdown
+       (string->integer-or-die (second rx))
+       (string->integer-or-die (third rx))
+       (string-ref (fourth rx) 0)
+       (fifth rx)))))
+
+;(: is-valid-password (breakdown -> Integer))
+;(define (is-valid-password bd)
+;  (let
+;      (
+  
+(: part-one (String -> Integer))
+(define (part-one filename)
+  (for/sum
+      ([line (read-input-file filename)])
+    (test-password (parse-line line))))
+
+(part-one "input.txt")
+
+#|
 #!/usr/bin/env perl -w
 # day02.pl ---
 
@@ -54,3 +124,4 @@ sub is_valid_password_2 {
 }
 
 main();
+|#

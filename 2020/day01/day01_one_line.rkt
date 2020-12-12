@@ -1,0 +1,2 @@
+#lang racket
+(let([v(list->vector(call-with-input-file(string->path"input.txt")(λ(file)(for/list([line(in-lines file)]#:unless(eof-object? line))(string->number line)))))])(let([l(vector-length v)])(for*([x(in-range l)][y(in-range l)][z(in-range l)]#:when(and(< x y)(< y z)(=(+(vector-ref v x)(vector-ref v y)(vector-ref v z))2020)))(displayln(~a"Answer to part 2: "(*(vector-ref v x)(vector-ref v y)(vector-ref v z)))))))
